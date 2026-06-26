@@ -14,6 +14,10 @@ function verificarDispositivo() {
 window.addEventListener('resize', verificarDispositivo);
 verificarDispositivo();
 
+if (localStorage.getItem('usuarioId')) {
+    window.location.href = 'dashboard/';
+}
+
 const authForm = document.getElementById('auth-form');
 const authTitle = document.getElementById('auth-title');
 const btnSubmit = document.getElementById('btn-submit');
@@ -48,7 +52,7 @@ authForm.addEventListener('submit', async (e) => {
         
         localStorage.setItem('usuarioId', data.usuarioId);
         localStorage.setItem('email', email);
-        window.location.href = './dashboard/';
+        window.location.href = 'dashboard/';
     } catch (err) {
         errorMsg.innerText = err.message;
     }
