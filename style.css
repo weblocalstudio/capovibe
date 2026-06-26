@@ -20,3 +20,41 @@ button:hover { opacity: 0.9; }
 .block-box p { color: #cbd5e1; margin-bottom: 1rem; }
 .block-box .highlight { color: #10b981; font-weight: bold; font-size: 1.2rem; margin-top: 1.5rem; }
 .hidden { display: none !important; }
+
+/* ==========================================
+   BLOQUEO TOTAL PARA PANTALLAS PEQUEÑAS
+   ========================================== */
+#block-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #05020a;
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 2rem;
+    box-sizing: border-box;
+}
+
+#block-screen h2 {
+    font-size: 1.8rem;
+    color: #a855f7;
+    margin-bottom: 1rem;
+    font-weight: 800;
+}
+
+#block-screen p {
+    font-size: 1rem;
+    color: #a188c4;
+    max-width: 400px;
+    line-height: 1.5;
+}
+
+.hidden {
+    display: none !important;
+}

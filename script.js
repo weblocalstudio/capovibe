@@ -1,18 +1,34 @@
 const API_URL = 'https://capovibe.weblocalstudio.es/api';
 let isLogin = true;
 
-// Filtro de dispositivo: Bloquear si es pantalla pequeña y NO es iPhone/Mac/iPad
-function verificarDispositivo() {
-    const isMobile = window.innerWidth < 1024;
-    const isApple = /iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent);
+// CONTROL ESTRICTO DE RESOLUCIÓN EN LA RAÍZ
+function verificarResolucionRaiz() {
+    let blockScreen = document.getElementById('block-screen');
     
-    if (isMobile && !isApple) {
-        document.getElementById('block-screen').classList.remove('hidden');
-        document.getElementById('main-auth-ui').classList.add('hidden');
+    if (window.innerWidth < 1024) {
+        if (!blockScreen) {
+            // Si no existía el contenedor en el HTML de la raíz, lo inyectamos
+            blockScreen = document.createElement('div');
+            blockScreen.id = 'block-screen';
+            blockScreen.innerHTML = `
+                <h2>Acceso no disponible</h2>
+                <p>CapoVibe está optimizado exclusivamente para ordenadores. Por favor, accede desde una pantalla más grande.</p>
+            `;
+            document.body.appendChild(blockScreen);
+        } else {
+            blockScreen.classList.remove('hidden');
+        }
+    } else {
+        if (blockScreen) {
+            blockScreen.classList.add('hidden');
+        }
     }
 }
-window.addEventListener('resize', verificarDispositivo);
-verificarDispositivo();
+
+// Escuchadores para controlar los cambios de tamaño y carga
+window.addEventListener('resize', verificarResolucionRaiz);
+window.addEventListener('DOMContentLoaded', verificarResolucionRaiz);
+verificarResolucionRaiz();
 
 if (localStorage.getItem('usuarioId')) {
     window.location.href = 'dashboard/';

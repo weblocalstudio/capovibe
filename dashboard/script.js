@@ -19,16 +19,36 @@ document.body.addEventListener('click', () => {
 }, { once: true });
 
 // Filtro estricto de dispositivo para Android
-function verificarDispositivo() {
-    const isMobile = window.innerWidth < 1024;
-    const isApple = /iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent);
-    const isAndroid = /Android/i.test(navigator.userAgent);
-    if (isAndroid) { 
-        document.getElementById('block-screen').classList.remove('hidden'); 
+// CONTROL ESTRICTO DE RESOLUCIÓN (Bloquea cualquier pantalla pequeña)
+function verificarResolucion() {
+    const blockScreen = document.getElementById('block-screen');
+    
+    // Si la pantalla es menor a 1024px (Móviles, tablets, pantallas giradas)
+    if (window.innerWidth < 1024) {
+        if (!blockScreen) {
+            // Si por algún motivo no tienes el div en tu HTML, lo creamos dinámicamente
+            const div = document.createElement('div');
+            div.id = 'block-screen';
+            div.innerHTML = `
+                <h2>Acceso no disponible</h2>
+                <p>CapoVibe está optimizado exclusivamente para ordenadores. Por favor, inicia sesión desde una pantalla más grande.</p>
+            `;
+            document.body.appendChild(div);
+        } else {
+            blockScreen.classList.remove('hidden');
+        }
+    } else {
+        // Si el usuario agranda la ventana en PC, se desbloquea
+        if (blockScreen) {
+            blockScreen.classList.add('hidden');
+        }
     }
 }
-window.addEventListener('resize', verificarDispositivo);
-verificarDispositivo();
+
+// Ejecutar la comprobación al cargar y al cambiar el tamaño de la ventana
+window.addEventListener('resize', verificarResolucion);
+window.addEventListener('DOMContentLoaded', verificarResolucion);
+verificarResolucion();
 
 // Redirección si no hay sesión activa
 if (!miId) { 
