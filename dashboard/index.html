@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CapoVibe - Chats</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+    <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
+    <link rel="manifest" href="../site.webmanifest">
+</head>
+<body>
+    <div id="block-screen" class="hidden">
+        <div class="block-box">
+            <h2>CapoVibe</h2>
+            <p>Esta plataforma web solo está disponible para ordenadores o dispositivos iOS (iPhone).</p>
+            <p class="highlight">¡Próximamente disponible en la Play Store para tu Android!</p>
+        </div>
+    </div>
+
+    <div class="dashboard-container">
+        <aside class="sidebar" id="app-sidebar">
+            <div id="sidebar-main" class="animate-slide-in">
+                <header class="user-header">
+                    <div class="brand-inline">
+                        <span class="logo-mini">💬</span>
+                        <h2>CapoVibe</h2>
+                    </div>
+                </header>
+                <div class="search-bar">
+                    <input type="text" id="search-user" placeholder="Buscar por correo...">
+                    <button id="btn-search">➕</button>
+                </div>
+                <div class="chats-list" id="chats-container"></div>
+            </div>
+
+            <div id="sidebar-settings" class="hidden">
+                <header class="user-header">
+                    <h2>Ajustes</h2>
+                </header>
+                <div class="settings-content">
+                    <div class="profile-card">
+                        <div class="big-avatar">T</div>
+                        <h4 id="my-email">test@test.test</h4>
+                        <span class="id-badge" id="my-id-badge">ID: ----</span>
+                    </div>
+                    <div class="settings-section">
+                        <label for="region-select">⚙️ ZONA HORARIA LIGADA A TU APPS</label>
+                        <select id="region-select">
+                            <option value="peninsula">España (Península) [+2h]</option>
+                            <option value="canarias">Islas Canarias [+1h]</option>
+                        </select>
+                    </div>
+                    <div class="settings-actions">
+                        <div class="card-btn" id="btn-logout">🚪 Cerrar Sesión</div>
+                        <div class="card-btn btn-danger-zone" id="btn-delete-container">
+                            <div class="delete-inputs">
+                                <span>🗑️ Eliminar Cuenta</span>
+                                <input type="password" id="delete-password" placeholder="Contraseña para confirmar" class="hidden">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="bottom-nav">
+                <button id="nav-chats-btn" class="nav-item active"><span>💬</span><p>Chats</p></button>
+                <button id="nav-settings-btn" class="nav-item"><span>⚙️</span><p>Ajustes</p></button>
+            </nav>
+        </aside>
+
+        <main class="chat-area" id="app-chat-area">
+            <div id="no-chat-selected" class="empty-state">
+                <div class="empty-icon">💬</div>
+                <h2>CapoVibe</h2>
+                <p>No tienes chats abiertos todavía.</p>
+            </div>
+            
+            <div id="chat-active" class="chat-box hidden">
+                <header class="chat-header">
+                    <button id="btn-back-to-list" class="hidden-desktop">⬅️</button>
+                    <h3 id="chat-target-title">Usuario</h3>
+                    <button id="btn-call" class="hidden">📞</button>
+                </header>
+                <div class="messages-container" id="messages-view"></div>
+                <footer class="chat-footer">
+                    <form id="msg-form">
+                        <div class="input-wrapper">
+                            <input type="text" id="msg-input" placeholder="Escribe un mensaje..." autocomplete="off" required>
+                        </div>
+                        <button type="submit" id="btn-send">🚀</button>
+                    </form>
+                </footer>
+            </div>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

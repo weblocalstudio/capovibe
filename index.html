@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CapoVibe - Login</title>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="block-screen" class="hidden">
+        <div class="block-box">
+            <h2>CapoVibe</h2>
+            <p>Esta plataforma web solo está disponible para ordenadores o dispositivos iOS (iPhone).</p>
+            <p class="highlight">¡Próximamente disponible en la Play Store para tu Android!</p>
+        </div>
+    </div>
+
+    <div class="auth-container" id="main-auth-ui">
+        <div class="brand-header">
+            <div class="app-logo-icon">💬</div>
+            <h1 class="logo">CapoVibe</h1>
+        </div>
+        <div id="auth-box">
+            <h2 id="auth-title">Iniciar Sesión</h2>
+            <form id="auth-form">
+                <input type="email" id="email" placeholder="Correo electrónico" required>
+                <input type="password" id="password" placeholder="Contraseña" required>
+                <button type="submit" id="btn-submit">Entrar</button>
+            </form>
+            <p id="toggle-auth">¿No tienes cuenta? <span id="toggle-link">Regístrate</span></p>
+            <p id="error-msg" class="error"></p>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
