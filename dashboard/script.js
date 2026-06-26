@@ -9,6 +9,7 @@ let ultimoMensajeIdGlobal = null;
 // Control de renderizado para evitar que las animaciones se repitan en bucle
 let idsMensajesRenderizados = new Set();
 let ultimoChatIdCargado = null;
+let mensajesNotificados = new Set();
 
 // Solicitar Notificaciones inmediatamente mediante interacción transparente
 document.body.addEventListener('click', () => {
@@ -31,7 +32,7 @@ verificarDispositivo();
 
 // Redirección si no hay sesión activa
 if (!miId) { 
-    window.location.href = '../'; 
+    window.location.href = '../index.html'; 
 }
 
 document.getElementById('my-email').innerText = miEmail;
@@ -47,18 +48,36 @@ regionSelect.value = localStorage.getItem('user_region');
 regionSelect.addEventListener('change', (e) => {
     localStorage.setItem('user_region', e.target.value);
     if (chatActivoId) { 
-        // Forzamos reseteo al cambiar de región para recalcular horas
         ultimoChatIdCargado = null;
         cargarHistorial(); 
     }
     cargarChatsRecientes();
 });
 
-// Marcar mensajes como leídos en el servidor
+// Solicitar permisos de notificación tras el primer toque en la pantalla (Requisito móvil)
+function inicializarNotificacionesMovil() {
+    if ("Notification" in window) {
+        if (Notification.permission === "default") {
+            Notification.requestPermission().then(perm => {
+                console.log("Estado de permisos en móvil:", perm);
+            }).catch(err => {
+                console.error("Error al solicitar permisos:", err);
+            });
+        }
+    } else {
+        console.warn("Este navegador móvil no soporta la API de notificaciones nativas.");
+    }
+}
+
+// Escuchador global en el cuerpo del documento para dispositivos táctiles
+document.body.addEventListener('click', inicializarNotificacionesMovil, { once: true });
+document.body.addEventListener('touchstart', inicializarNotificacionesMovil, { once: true });
+
+// FUNCIÓN CORREGIDA: Ahora usa PUT y /leido como tu servidor pide
 async function marcarComoLeidos(idChat) {
     try {
-        await fetch(`${API_URL}/mensajes/leer`, {
-            method: 'POST',
+        await fetch(`${API_URL}/mensajes/leido`, {
+            method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ emisorId: idChat, receptorId: miId })
         });
@@ -72,19 +91,29 @@ document.getElementById('nav-settings-btn').addEventListener('click', () => {
     document.getElementById('nav-chats-btn').classList.remove('active');
     document.getElementById('nav-settings-btn').classList.add('active');
     document.getElementById('sidebar-main').classList.add('hidden');
-    document.getElementById('sidebar-settings').classList.remove('hidden');
+    
+    const settings = document.getElementById('sidebar-settings');
+    settings.classList.remove('hidden');
+    settings.classList.remove('animate-slide-in');
+    void settings.offsetWidth; 
+    settings.classList.add('animate-slide-in');
 });
 
 document.getElementById('nav-chats-btn').addEventListener('click', () => {
     document.getElementById('nav-settings-btn').classList.remove('active');
     document.getElementById('nav-chats-btn').classList.add('active');
     document.getElementById('sidebar-settings').classList.add('hidden');
-    document.getElementById('sidebar-main').classList.remove('hidden');
+    
+    const main = document.getElementById('sidebar-main');
+    main.classList.remove('hidden');
+    main.classList.remove('animate-slide-in');
+    void main.offsetWidth; 
+    main.classList.add('animate-slide-in');
 });
 
 document.getElementById('btn-logout').addEventListener('click', () => {
     localStorage.clear();
-    window.location.href = '../';
+    window.location.href = '../index.html';
 });
 
 // Soporte de borrado de cuenta en zona de peligro
@@ -106,14 +135,13 @@ document.getElementById('btn-delete-container').addEventListener('click', async 
             });
             if (!r.ok) throw new Error("Error en password");
             localStorage.clear();
-            window.location.href = '../';
+            window.location.href = '../index.html';
         } catch (err) { 
             alert("Error al eliminar la cuenta."); 
         }
     }
 });
 
-// Detección automática de enlaces y correos
 function linkify(text) {
     const urlPattern = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
     const emailPattern = /((([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,})))/g;
@@ -122,7 +150,6 @@ function linkify(text) {
         .replace(emailPattern, '<a href="mailto:$1">$1</a>');
 }
 
-// Cómputo de horas exacto: Península +2h, Canarias +1h
 function computarFechaCustom(fechaString) {
     const fecha = new Date(fechaString);
     const region = localStorage.getItem('user_region');
@@ -131,7 +158,6 @@ function computarFechaCustom(fechaString) {
     return fecha;
 }
 
-// Formateador de días estilo WhatsApp
 function obtenerEtiquetaDia(fechaObj) {
     const hoy = new Date();
     const ayer = new Date();
@@ -143,7 +169,6 @@ function obtenerEtiquetaDia(fechaObj) {
     return fechaObj.toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
-// Abrir conversación activa
 async function abrirConversacion(id, email) {
     chatActivoId = id;
     
@@ -152,11 +177,8 @@ async function abrirConversacion(id, email) {
     
     document.getElementById('chat-active').classList.remove('hidden');
     document.getElementById('chat-target-title').innerText = email;
-    
-    // Activar clase responsiva para pantallas móviles (iPhone)
     document.body.classList.add('chat-opened');
     
-    // Marcar como leído inmediatamente al entrar
     await marcarComoLeidos(id);
     
     comprobarModuloLlamadas();
@@ -165,12 +187,10 @@ async function abrirConversacion(id, email) {
     bucleMensajes = setInterval(cargarHistorial, 3000);
 }
 
-// Botón volver atrás para entornos móviles
 document.getElementById('btn-back-to-list').addEventListener('click', () => {
     document.body.classList.remove('chat-opened');
 });
 
-// Comprobar si el botón de llamada debe aparecer según el servidor
 async function comprobarModuloLlamadas() {
     try {
         const response = await fetch(`${API_URL}/funciones/comprobar/llamadas`);
@@ -183,7 +203,6 @@ async function comprobarModuloLlamadas() {
     }
 }
 
-// Cargar barra lateral con chats recientes
 async function cargarChatsRecientes() {
     try {
         const response = await fetch(`${API_URL}/mensajes/recientes/${miId}`);
@@ -212,7 +231,6 @@ async function cargarChatsRecientes() {
     }
 }
 
-// Cargar historial con auto-lectura e inyección incremental de mensajes sin parpadeos
 async function cargarHistorial() {
     if (!chatActivoId) return;
     try {
@@ -221,27 +239,29 @@ async function cargarHistorial() {
         const view = document.getElementById('messages-view');
         const estabaAlFinal = view.scrollHeight - view.scrollTop <= view.clientHeight + 100;
         
-        // Si cambiamos a un chat distinto, vaciamos la vista y el set de memoria
         if (ultimoChatIdCargado !== chatActivoId) {
             view.innerHTML = '';
             idsMensajesRenderizados.clear();
+            mensajesNotificados.clear();
             ultimoChatIdCargado = chatActivoId;
         }
 
         let ultimaEtiquetaFecha = "";
         let tieneMensajesNuevosDeOtros = false;
+        const esCargaInicial = (idsMensajesRenderizados.size === 0);
 
         mensajes.forEach((msg) => {
             const fechaAjustada = computarFechaCustom(msg.fecha_envio);
             const etiquetaDiaActual = obtenerEtiquetaDia(fechaAjustada);
             const horaString = String(fechaAjustada.getHours()).padStart(2, '0') + ':' + String(fechaAjustada.getMinutes()).padStart(2, '0');
-            const checkClass = msg.leido ? 'read' : 'unread';
-
+            
             if (msg.emisor_id !== miId && !msg.leido) {
                 tieneMensajesNuevosDeOtros = true;
+                msg.leido = true; 
             }
 
-            // Inyección controlada de separadores flotantes estilo WhatsApp
+            const checkClass = msg.leido ? 'read' : 'unread';
+
             if (etiquetaDiaActual !== ultimaEtiquetaFecha) {
                 ultimaEtiquetaFecha = etiquetaDiaActual;
                 const separadoresExistentes = Array.from(view.querySelectorAll('.chat-date-separator'));
@@ -255,7 +275,6 @@ async function cargarHistorial() {
                 }
             }
 
-            // Si el mensaje ya existe en pantalla, solo actualizamos los tics
             if (idsMensajesRenderizados.has(msg.id)) {
                 const msgExistente = document.getElementById(`msg-${msg.id}`);
                 if (msgExistente && msg.emisor_id === miId) {
@@ -267,12 +286,10 @@ async function cargarHistorial() {
                 return; 
             }
 
-            // Crear nodo físico únicamente para los mensajes que entran nuevos
             const div = document.createElement('div');
             div.id = `msg-${msg.id}`;
             
-            // Si el set está vacío es la primera carga (sin animación). Si ya hay datos, es tiempo real (con animación).
-            const claseAnimacion = idsMensajesRenderizados.size === 0 ? '' : 'new-msg-anim';
+            const claseAnimacion = esCargaInicial ? '' : 'new-msg-anim';
             div.className = `msg ${msg.emisor_id === miId ? 'me' : 'them'} ${claseAnimacion}`;
             
             div.innerHTML = `
@@ -285,30 +302,27 @@ async function cargarHistorial() {
             
             view.appendChild(div);
             idsMensajesRenderizados.add(msg.id);
+
+            if (!esCargaInicial && msg.emisor_id !== miId && !mensajesNotificados.has(msg.id)) {
+                mensajesNotificados.add(msg.id);
+                if (Notification.permission === "granted") {
+                    new Notification("CapoVibe", { 
+                        body: `${document.getElementById('chat-target-title').innerText}: ${msg.texto}` 
+                    });
+                }
+            }
         });
         
-        // Auto-leer los mensajes entrantes en caliente
         if (tieneMensajesNuevosDeOtros) {
             await marcarComoLeidos(chatActivoId);
         }
         
-        // Alertas globales mediante notificaciones
-        if (mensajes.length > 0) {
-            const ultimoMsg = mensajes[mensajes.length - 1];
-            if (ultimoMsg.id !== ultimoMensajeIdGlobal && ultimoMsg.emisor_id !== miId) {
-                ultimoMensajeIdGlobal = ultimoMsg.id;
-                if (Notification.permission === "granted" && !document.body.classList.contains('chat-opened')) {
-                    new Notification("CapoVibe", { body: `${document.getElementById('chat-target-title').innerText}: ${ultimoMsg.texto}` });
-                }
-            }
-        }
-        if (estabaAlFinal) view.scrollTop = view.scrollHeight;
+        if (estabaAlFinal || esCargaInicial) view.scrollTop = view.scrollHeight;
     } catch (err) { 
-        console.error(err); 
+        console.error("Error cargando historial:", err); 
     }
 }
 
-// Envío del formulario de mensajes
 document.getElementById('msg-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const input = document.getElementById('msg-input');
@@ -328,7 +342,6 @@ document.getElementById('msg-form').addEventListener('submit', async (e) => {
     }
 });
 
-// Evento de búsqueda e inicio de chat por correo electrónico
 document.getElementById('btn-search').addEventListener('click', async () => {
     const emailInput = document.getElementById('search-user').value.trim();
     if (!emailInput) return;
@@ -347,6 +360,5 @@ document.getElementById('btn-search').addEventListener('click', async () => {
     }
 });
 
-// Inicialización de flujos concurrentes
 cargarChatsRecientes();
 setInterval(cargarChatsRecientes, 5000);

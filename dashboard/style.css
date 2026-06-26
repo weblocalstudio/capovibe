@@ -1,31 +1,177 @@
-* { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
-body { background: #05020a; color: #f8fafc; height: 100vh; overflow: hidden; }
-.dashboard-container { display: flex; height: 100vh; width: 100vw; }
+/* ==========================================
+   CONFIGURACIÓN GENERAL Y RESET
+   ========================================== */
+* { 
+    box-sizing: border-box; 
+    margin: 0; 
+    padding: 0; 
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+}
 
-.sidebar { width: 360px; min-width: 360px; background: #0b0614; border-right: 1px solid #1a0f2b; display: flex; flex-direction: column; position: relative; }
-#sidebar-main, #sidebar-settings { flex: 1; display: flex; flex-direction: column; margin-bottom: 65px; overflow-y: auto; }
+body { 
+    background: #05020a; 
+    color: #f8fafc; 
+    height: 100vh; 
+    overflow: hidden; 
+}
 
-.user-header { padding: 1.2rem; background: #05020a; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #160d24; }
-.brand-inline { display: flex; align-items: center; gap: 0.6rem; }
-.brand-inline h2 { font-size: 1.3rem; font-weight: 700; }
+.dashboard-container { 
+    display: flex; 
+    height: 100vh; 
+    width: 100vw; 
+}
 
-.search-bar { padding: 0.8rem; display: flex; gap: 0.5rem; background: #05020a; }
-.search-bar input { flex: 1; padding: 0.65rem 0.8rem; border-radius: 12px; border: 1px solid #1c1030; background: #11091f; color: white; }
-.search-bar button { padding: 0.65rem 1rem; background: #7e22ce; border: none; border-radius: 12px; color: white; cursor: pointer; }
+.hidden { 
+    display: none !important; 
+}
 
-.chat-item { padding: 1.1rem; display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid #130a21; cursor: pointer; }
-.chat-info h4 { font-size: 0.95rem; color: white; margin-bottom: 0.2rem; }
-.chat-info p { font-size: 0.85rem; color: #a188c4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
-.chat-meta { font-size: 0.75rem; color: #5c5270; }
+/* ==========================================
+   ESTRUCTURA DE LA BARRA LATERAL (SIDEBAR)
+   ========================================== */
+.sidebar { 
+    width: 360px; 
+    min-width: 360px; 
+    background: #0b0614; 
+    border-right: 1px solid #1a0f2b; 
+    display: flex; 
+    flex-direction: column; 
+    position: relative; 
+}
 
-/* Configuración de Ajustes */
-.settings-content { padding: 1rem; display: flex; flex-direction: column; gap: 1.2rem; }
-.profile-card { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; }
-.big-avatar { width: 75px; height: 75px; background: linear-gradient(135deg, #a855f7, #00d2ff); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 2rem; font-weight: bold; }
-.id-badge { color: #00d2ff; font-size: 0.8rem; background: rgba(0,210,255,0.1); padding: 0.2rem 0.5rem; border-radius: 12px; }
-/* Hacer el texto del selector de ubicación más grande e intuitivo */
+#sidebar-main, #sidebar-settings { 
+    flex: 1; 
+    display: flex; 
+    flex-direction: column; 
+    /* Colchón inferior para que la barra de navegación fija no tape el contenido */
+    padding-bottom: calc(75px + env(safe-area-inset-bottom)) !important; 
+    overflow-y: auto; 
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.user-header { 
+    padding: 1.2rem; 
+    background: #05020a; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    border-bottom: 1px solid #160d24; 
+}
+
+.brand-inline { 
+    display: flex; 
+    align-items: center; 
+    gap: 0.6rem; 
+}
+
+.brand-inline h2 { 
+    font-size: 1.3rem; 
+    font-weight: 700; 
+}
+
+.search-bar { 
+    padding: 0.8rem; 
+    display: flex; 
+    gap: 0.5rem; 
+    background: #05020a; 
+}
+
+.search-bar input { 
+    flex: 1; 
+    padding: 0.65rem 0.8rem; 
+    border-radius: 12px; 
+    border: 1px solid #1c1030; 
+    background: #11091f; 
+    color: white; 
+}
+
+.search-bar button { 
+    padding: 0.65rem 1rem; 
+    background: #7e22ce; 
+    border: none; 
+    border-radius: 12px; 
+    color: white; 
+    cursor: pointer; 
+}
+
+/* Lista de Chats */
+#chats-container {
+    padding-bottom: calc(75px + env(safe-area-inset-bottom)) !important;
+}
+
+.chat-item { 
+    padding: 1.1rem; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: flex-start; 
+    border-bottom: 1px solid #130a21; 
+    cursor: pointer; 
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.chat-item:active {
+    transform: scale(0.98);
+    background: #1c0f33;
+}
+
+.chat-info h4 { 
+    font-size: 0.95rem; 
+    color: white; 
+    margin-bottom: 0.2rem; 
+}
+
+.chat-info p { 
+    font-size: 0.85rem; 
+    color: #a188c4; 
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+    max-width: 200px; 
+}
+
+.chat-meta { 
+    font-size: 0.75rem; 
+    color: #5c5270; 
+}
+
+/* ==========================================
+   SECCIÓN DE CONFIGURACIÓN / AJUSTES
+   ========================================== */
+.settings-content { 
+    padding: 1rem; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 1.2rem; 
+}
+
+.profile-card { 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    gap: 0.5rem; 
+}
+
+.big-avatar { 
+    width: 75px; 
+    height: 75px; 
+    background: linear-gradient(135deg, #a855f7, #00d2ff); 
+    border-radius: 50%; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    font-size: 2rem; 
+    font-weight: bold; 
+}
+
+.id-badge { 
+    color: #00d2ff; 
+    font-size: 0.8rem; 
+    background: rgba(0,210,255,0.1); 
+    padding: 0.2rem 0.5rem; 
+    border-radius: 12px; 
+}
+
 .settings-section label {
-    font-size: 0.85rem; /* Un poco más grande y marcado */
+    font-size: 0.85rem; 
     color: #a78bfa;
     font-weight: 700;
     letter-spacing: 0.5px;
@@ -35,12 +181,12 @@ body { background: #05020a; color: #f8fafc; height: 100vh; overflow: hidden; }
 
 select {
     width: 100%;
-    padding: 0.95rem; /* Más espaciado interno */
+    padding: 0.95rem; 
     background: #11091f;
     border: 1px solid #1c1030;
     color: #ffffff;
     border-radius: 14px;
-    font-size: 1.1rem; /* Texto del desplegable más grande */
+    font-size: 1.1rem; 
     font-weight: 600;
     outline: none;
     cursor: pointer;
@@ -51,24 +197,150 @@ select option {
     color: #ffffff;
     font-size: 1rem;
 }
-.card-btn { background: #11091f; padding: 0.9rem; border-radius: 12px; cursor: pointer; font-weight: 600; margin-bottom: 0.5rem; border: 1px solid #1c1030; }
-.btn-danger-zone { border-color: #541624; color: #f43f5e; }
-.delete-inputs input { width: 100%; background: #05020a; border: 1px solid #541624; padding: 0.5rem; border-radius: 8px; color: white; margin-top: 0.5rem; }
 
-.bottom-nav { position: absolute; bottom: 0; left: 0; width: 100%; height: 65px; background: #05020a; border-top: 1px solid #160d24; display: flex; }
-.nav-item { background: transparent; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #4b3d61; width: 50%; cursor: pointer; }
-.nav-item.active { color: #a855f7; }
+.card-btn { 
+    background: #11091f; 
+    padding: 0.9rem; 
+    border-radius: 12px; 
+    cursor: pointer; 
+    font-weight: 600; 
+    margin-bottom: 0.5rem; 
+    border: 1px solid #1c1030; 
+    transition: background 0.2s ease, transform 0.1s ease, border-color 0.2s ease;
+}
 
-/* Área del Chat */
-.chat-area { flex: 1; background: #05020a; display: flex; flex-direction: column; position: relative; }
-.empty-state { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; width: 100%; color: #3c324d; text-align: center; }
-.chat-box { display: flex; flex-direction: column; height: 100%; width: 100%; background: #05020a; }
-.chat-header { padding: 1rem; background: #0b0614; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #160d24; }
-#btn-back-to-list { background: transparent; border: none; color: #a855f7; font-size: 1.2rem; margin-right: 0.5rem; cursor: pointer; }
+.card-btn:active {
+    transform: scale(0.97);
+}
 
-.messages-container { flex: 1; padding: 1rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.5rem; background: #040107; }
-.chat-date-separator { align-self: center; background: rgba(30, 20, 50, 0.8); color: #b1a2cd; font-size: 0.75rem; font-weight: 600; padding: 0.3rem 0.8rem; border-radius: 10px; margin: 0.5rem 0; }
-/* Quita el "animation" de .msg general para que el historial viejo cargue estático y rápido */
+.btn-danger-zone { 
+    border-color: #541624; 
+    color: #f43f5e; 
+}
+
+.delete-inputs input { 
+    width: 100%; 
+    background: #05020a; 
+    border: 1px solid #541624; 
+    padding: 0.5rem; 
+    border-radius: 8px; 
+    color: white; 
+    margin-top: 0.5rem; 
+}
+
+/* Barra de Navegación Inferior Móvil */
+.bottom-nav { 
+    position: absolute; 
+    bottom: 0; 
+    left: 0; 
+    width: 100%; 
+    /* Cambiado a cálculo dinámico con zona segura para evitar solapes */
+    height: calc(65px + env(safe-area-inset-bottom)); 
+    background: #05020a; 
+    border-top: 1px solid #160d24; 
+    display: flex; 
+    padding-bottom: env(safe-area-inset-bottom);
+    z-index: 110;
+}
+
+.nav-item { 
+    background: transparent; 
+    border: none; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center; 
+    color: #4b3d61; 
+    width: 50%; 
+    cursor: pointer; 
+    transition: color 0.25s ease;
+}
+
+.nav-item span {
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.nav-item:active span {
+    transform: scale(1.2); 
+}
+
+.nav-item.active { 
+    color: #a855f7; 
+}
+
+/* ==========================================
+   ÁREA VISUAL DE LA CONVERSACIÓN (CHAT)
+   ========================================== */
+.chat-area { 
+    flex: 1; 
+    background: #05020a; 
+    display: flex; 
+    flex-direction: column; 
+    position: relative; 
+}
+
+.empty-state { 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+    align-items: center; 
+    height: 100%; 
+    width: 100%; 
+    color: #3c324d; 
+    text-align: center; 
+}
+
+.chat-box { 
+    display: flex; 
+    flex-direction: column; 
+    height: 100%; 
+    width: 100%; 
+    background: #05020a; 
+}
+
+.chat-header { 
+    padding: 1rem; 
+    background: #0b0614; 
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between; 
+    border-bottom: 1px solid #160d24; 
+}
+
+#btn-back-to-list { 
+    background: transparent; 
+    border: none; 
+    color: #a855f7; 
+    font-size: 1.2rem; 
+    margin-right: 0.5rem; 
+    cursor: pointer; 
+}
+
+.messages-container { 
+    flex: 1; 
+    padding: 1rem; 
+    overflow-y: auto; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 0.5rem; 
+    background: #040107; 
+    /* Aire inferior para que la barra flotante de escribir no tape el último texto */
+    padding-bottom: calc(85px + env(safe-area-inset-bottom)) !important;
+}
+
+.chat-date-separator { 
+    align-self: center; 
+    background: rgba(30, 20, 50, 0.8); 
+    color: #b1a2cd; 
+    font-size: 0.75rem; 
+    font-weight: 600; 
+    padding: 0.3rem 0.8rem; 
+    border-radius: 10px; 
+    margin: 0.5rem 0; 
+    animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Burbujas de Texto */
 .msg {
     max-width: 75%;
     padding: 0.65rem 0.9rem;
@@ -79,65 +351,125 @@ select option {
     flex-direction: column;
 }
 
-/* Crea esta clase nueva: SOLO se ejecutará cuando caiga un mensaje en vivo */
 .new-msg-anim {
     animation: popIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
     transform-origin: bottom right;
 }
+
 .msg.them.new-msg-anim {
     transform-origin: bottom left;
 }
-.msg.me { background: #7e22ce; color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
-.msg.them { background: #1c132e; color: white; align-self: flex-start; border-bottom-left-radius: 4px; }
-.msg-meta-box { display: flex; align-items: center; justify-content: flex-end; gap: 0.25rem; margin-top: 0.15rem; align-self: flex-end; }
-.msg-time { font-size: 0.65rem; color: #d8b4fe; }
-.msg.them .msg-time { color: #94a3b8; }
-.msg-check { font-size: 0.75rem; font-weight: bold; }
-.msg-check.read { color: #00d2ff; }
-.msg-check.unread { color: #a1a1aa; }
 
-.chat-footer { padding: 0.8rem; background: #05020a; }
-#msg-form { display: flex; gap: 0.5rem; align-items: center; }
-.input-wrapper { flex: 1; background: #11091f; border: 1px solid #1c1030; border-radius: 20px; }
-#msg-form input { width: 100%; padding: 0.6rem 0.8rem; background: transparent; border: none; color: white; outline: none; }
-#msg-form button { width: 40px; height: 40px; background: #7e22ce; border: none; border-radius: 50%; color: white; cursor: pointer; }
+.msg.me { 
+    background: #7e22ce; 
+    color: white; 
+    align-self: flex-end; 
+    border-bottom-right-radius: 4px; 
+}
 
-.hidden { display: none !important; }
+.msg.them { 
+    background: #1c132e; 
+    color: white; 
+    align-self: flex-start; 
+    border-bottom-left-radius: 4px; 
+}
 
-/* MEDIA QUERIES INDISPENSABLES PARA QUE SEA RESPONSIVO EN IPHONE */
-@media (max-width: 1023px) {
-    .hidden-desktop { display: inline-block !important; }
-    .sidebar { width: 100vw; min-width: 100vw; }
-    .chat-area { display: none; width: 100vw; position: fixed; top: 0; left: 0; height: 100vh; z-index: 100; }
-    body.chat-opened .sidebar { display: none; }
-    body.chat-opened .chat-area { display: flex; }
+.msg-meta-box { 
+    display: flex; 
+    align-items: center; 
+    justify-content: flex-end; 
+    gap: 0.25rem; 
+    margin-top: 0.15rem; 
+    align-self: flex-end; 
+}
+
+.msg-time { 
+    font-size: 0.65rem; 
+    color: #d8b4fe; 
+}
+
+.msg.them .msg-time { 
+    color: #94a3b8; 
+}
+
+.msg-check { 
+    font-size: 0.75rem; 
+    font-weight: bold; 
+}
+
+.msg-check.read { 
+    color: #00d2ff; 
+    animation: pulseCheck 0.3s ease-out forwards;
+}
+
+.msg-check.unread { 
+    color: #a1a1aa; 
+}
+
+/* Barra inferior del formulario del chat */
+.chat-footer { 
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: #05020a; 
+    /* Colchón extra dinámico para evitar solapamientos con gestos de barra */
+    padding: 0.8rem 0.8rem calc(0.8rem + env(safe-area-inset-bottom)) 0.8rem;
+    z-index: 110;
+}
+
+#msg-form { 
+    display: flex; 
+    gap: 0.5rem; 
+    align-items: center; 
+}
+
+.input-wrapper { 
+    flex: 1; 
+    background: #11091f; 
+    border: 1px solid #1c1030; 
+    border-radius: 20px; 
+}
+
+#msg-form input { 
+    width: 100%; 
+    padding: 0.6rem 0.8rem; 
+    background: transparent; 
+    border: none; 
+    color: white; 
+    outline: none; 
+}
+
+#msg-form button { 
+    width: 40px; 
+    height: 40px; 
+    background: #7e22ce; 
+    border: none; 
+    border-radius: 50%; 
+    color: white; 
+    cursor: pointer; 
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease;
+}
+
+#btn-send:hover {
+    transform: rotate(-5deg) scale(1.05);
+}
+
+#btn-send:active {
+    transform: scale(0.9);
 }
 
 /* ==========================================
-   ANIMACIONES CHIDAS Y FLUIDAS (ESTILO APP)
+   ANIMACIONES Y RESPONSIVIDAD (MEDIA QUERIES)
    ========================================== */
-
-/* 1. Definición de las transiciones clave */
 @keyframes slideUp {
-    from {
-        transform: translateY(20px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
 }
 
 @keyframes popIn {
-    0% {
-        transform: scale(0.92);
-        opacity: 0;
-    }
-    100% {
-        transform: scale(1);
-        opacity: 1;
-    }
+    0% { transform: scale(0.92); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
 }
 
 @keyframes pulseCheck {
@@ -145,74 +477,24 @@ select option {
     100% { transform: scale(1); }
 }
 
-/* 2. Aplicar las animaciones a los elementos del chat */
-
-/* Los mensajes nuevos aparecen con un ligero escalado suave */
-.msg {
-    animation: popIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-    transform-origin: bottom right;
-}
-.msg.them {
-    transform-origin: bottom left;
-}
-
-/* El doble check azul hace un pequeño brinco al activarse */
-.msg-check.read {
-    animation: pulseCheck 0.3s ease-out forwards;
-}
-
-/* Los separadores de fecha flotantes caen suavemente desde arriba */
-.chat-date-separator {
-    animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-/* 3. Efectos de interacción "Feedback háptico visual" */
-
-/* Los chats de la lista se iluminan suavemente */
-.chat-item {
-    transition: background-color 0.2s ease, transform 0.2s ease;
-}
-.chat-item:active {
-    transform: scale(0.98); /* Se hunde un poquito al pulsarlo en el iPhone */
-    background: #1c0f33;
-}
-
-/* Botones de navegación inferior */
-.nav-item {
-    transition: color 0.25s ease;
-}
-.nav-item span {
-    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-.nav-item:active span {
-    transform: scale(1.2); /* El icono se agranda al mantenerlo pulsado */
-}
-
-/* Los botones tipo tarjeta de los ajustes reaccionan al toque */
-.card-btn {
-    transition: background 0.2s ease, transform 0.1s ease, border-color 0.2s ease;
-}
-.card-btn:active {
-    transform: scale(0.97);
-}
-
-/* El botón de enviar mensaje vuela ligeramente */
-#btn-send {
-    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease;
-}
-#btn-send:hover {
-    transform: rotate(-5deg) scale(1.05);
-}
-#btn-send:active {
-    transform: scale(0.9);
-}
-
-/* Transición limpia al cambiar entre la lista de Chats y Ajustes */
-#sidebar-main, #sidebar-settings {
-    transition: opacity 0.2s ease, transform 0.2s ease;
-}
-
-/* Animación para pantallas completas que se activan */
 .animate-slide-in {
     animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@media (max-width: 1023px) {
+    .hidden-desktop { display: inline-block !important; }
+    .sidebar { width: 100vw; min-width: 100vw; }
+    
+    .chat-area { 
+        display: none; 
+        width: 100vw; 
+        position: fixed; 
+        top: 0; 
+        left: 0; 
+        height: 100vh; 
+        z-index: 100; 
+    }
+    
+    body.chat-opened .sidebar { display: none; }
+    body.chat-opened .chat-area { display: flex; }
 }
